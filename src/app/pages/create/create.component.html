@@ -1,0 +1,72 @@
+<div class="flex flex-col justify-between pb-5 w-full h-screen items-center">
+    <div class="flex flex-col items-center gap-8 w-full">
+
+        <div class="flex flex-col items-center max-w-fit gap-16 max-w-[800px] w-full bg-white p-5 rounded-md">
+
+            <div class="flex flex-col gap-[10px]">
+                <h1 class="text-center text-blue-primary text-2xl font-bold leading-normal">
+                    Registro de tareas
+                </h1>
+                <p class="text-center text-constrast-text-primary text-xs leading-normal font-medium">
+
+                    Puedes gestionar tus tareas y adicionar personas
+                </p>
+            </div>
+            <form [formGroup]="loginForm" class="flex flex-col gap-16 w-full" (ngSubmit)="login()">
+                <div class="flex flex-col gap-[10px]">
+
+
+                    <input pInputText pInputText formControlName="nameTask" placeholder="Nombre de la tarea" class="" />
+                    <small *ngIf="loginForm.get('nameTask')?.invalid && loginForm.get('nameTask')?.touched"
+                        class="text-red-500 pl-1">
+                        El nombre debe tener al menos 5 caracteres.
+                    </small>
+                    <p-calendar formControlName="deadline" placeholder="Fecha límite"></p-calendar>
+
+
+
+
+
+                    <div formArrayName="personas">
+                        <div *ngFor="let persona of personas.controls; let i = index" [formGroupName]="i">
+                            <h1 class="text-left text-blue-primary text-xl font-bold leading-normal">
+                                Nueva personas asociada
+                            </h1>
+                            <div class="flex flex-col gap-[10px]">
+                                <input pInputText formControlName="nombreCompleto" placeholder="Nombre Completo"
+                                    class="" />
+                                <p-inputNumber formControlName="edad" placeholder="Edad" inputId="integeronly" />
+                            </div>
+
+                            <div formArrayName="habilidades">
+                                <label for="habilidad">Habilidades</label>
+                                <div *ngFor="let habilidad of getHabilidades(i).controls; let j = index"
+                                    [formGroupName]="j">
+                                    <input pInputText id="habilidad"  placeholder="Ingresa las habilidades" formControlName="habilidad">
+                                    <button (click)="eliminarHabilidad(i, j)">Eliminar Habilidad</button>
+                                </div>
+                                <p-chip
+                                    *ngFor="let persona of  personas.at(i).get('habilidades')?.value; ; let j = index"
+                                    [label]="persona.habilidad" (onRemove)="eliminarHabilidad(i, j)">
+                                </p-chip>
+                                <button (click)="agregarHabilidad(i)">Añadir habilidad</button>
+                            </div>
+
+                            <button (click)="eliminarPersona(i)">Eliminar persona</button>
+                        </div>
+                    </div>
+
+
+
+
+
+                </div>
+                <button (click)="agregarPersona()">Añadir persona</button>
+                <button type="submit">Crear Tarea</button>
+
+            </form>
+        </div>
+    </div>
+
+</div>
+<p-toast />

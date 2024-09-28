@@ -1,0 +1,25 @@
+<nav
+  class="bg-slate-50 fixed w-full left-0 py-2 text-white font-medium z-50"
+>
+  <div class="container flex justify-between items-center mx-auto">
+    <div class="flex gap-8">
+      <div class="border-e-2 border-e-primary-blue pe-8">
+        <img src="../../../assets/images/velaio-logo.png" alt="logo" class="max-w-24"/>
+      </div>
+      <ul class="flex gap-8 items-center">
+        <li>
+          <a [routerLink]="['create']" routerLinkActive="active"
+            >Crear tareas</a
+          >
+        </li>
+        <li>
+          <a [routerLink]="['list']" routerLinkActive="active"
+            >Listar tareas</a
+          >
+        </li>
+
+      </ul>
+    </div>
+   
+  </div>
+</nav>
