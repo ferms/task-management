@@ -34,6 +34,7 @@ export class FormCreateTaskComponent {
 
   private _formBuilder = inject(FormBuilder);
   private _taskService = inject(TaskService);  
+  private _messageService = inject(MessageService);
   public taskForm!: FormGroup;
   public nuevaHabilidadInput: string[] = [];
 
@@ -49,7 +50,7 @@ export class FormCreateTaskComponent {
     return this.taskForm.get('personas') as FormArray;
   }
 
-  nuevaPersona(): FormGroup {
+  newPerson(): FormGroup {
     return this._formBuilder.group({
       nombreCompleto: ['', [Validators.required, Validators.minLength(5)]],
       edad: [null, [Validators.required, Validators.min(18)]],
@@ -83,7 +84,7 @@ export class FormCreateTaskComponent {
   }
 
   agregarPersona(): void {
-    this.personas.push(this.nuevaPersona());
+    this.personas.push(this.newPerson());
   }
 
   eliminarPersona(index: number): void {
@@ -126,36 +127,49 @@ export class FormCreateTaskComponent {
   }
   
 
-
-  // Method to submit the task
   public sendTask(): void {
     if (this.taskForm.valid) {
-      const userId = 2;  // Example user ID
-  
+      const userId = 2;  
       const taskData: Task = {
-        userId: userId,  // Assign the userId to the task
-        id: this.generateTaskId(),  // Generate a unique task ID
+        userId: userId, 
+        id: this.generateTaskId(),  
         title: this.taskForm.get('nameTask')?.value,
         completed: false,
         personas: this.personas.value.map((persona: any) => ({
           ...persona,
-          userId: userId  // Ensure each persona has the same userId
+          userId: userId  
         })),
       };
-  
-      // Save the task using the TaskService
+
       this._taskService.saveTask(taskData);
       console.log('Task saved successfully', taskData);
+      this._messageService.add({
+        severity: 'success',
+        summary: 'Tarea creado con éxito!',
+        detail:
+          'La tarea ha sido registrado correctamente en el sistema.',
+      });
+      this.resetForm();
     } else {
       this.taskForm.markAllAsTouched();
-      console.log('Form is invalid');
+      this._messageService.add({
+        severity: 'error',
+        summary: 'Ocurrió un error',
+        detail: 'Error desconocido',
+      });
     }
   }
   
+ private resetForm() {
+    this.taskForm.reset({
+      title: '',
+      completed: false,
+      personas: []
+    });
+  }
 
-  // Utility to generate a unique task ID (you can modify this as needed)
   private generateTaskId(): number {
-    return Math.floor(Math.random() * 1000);  // Example logic for ID generation
+    return Math.floor(Math.random() * 1000);  
   }
 
 }

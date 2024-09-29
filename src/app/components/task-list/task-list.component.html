@@ -1,0 +1,52 @@
+<p-dropdown
+  [options]="optionsStatus"
+  [(ngModel)]="stateSelect"
+  (onChange)="changeFilter($event)"
+  placeholder="Seleccionar estado"
+  class="mb-4 block"
+></p-dropdown>
+<p-table
+  #dTable
+  [value]="tasks()"
+  [paginator]="true"
+  [rows]="rows()"
+  [first]="first()"
+  [lazy]="true"
+  (onLazyLoad)="tasks()"
+  [totalRecords]="totalRecords()"
+  [rowsPerPageOptions]="[5, 10, 20]"
+  (onPage)="changePage($event)"
+  [tableStyle]="{ 'min-width': '50rem' }"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th scope="col">Tarea</th>
+      <th scope="col">Personas</th>
+      <th scope="col">Estado</th>
+      <th scope="col">Acciones</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-task>
+    <tr>
+      <td>{{ task.title }}</td>
+
+      <td>
+        <ul *ngIf="task.personas.length > 0">
+          <li *ngFor="let persona of task.personas" class="block mb-1 w-full">
+            {{ persona.nombreCompleto }} ({{ persona.edad }} años) - 
+            Habilidades: {{ getHabilidadesString(persona) }}
+          </li>
+        </ul>
+        <span *ngIf="task.personas.length === 0">Sin personas asociadas</span>
+      </td>
+
+      <td>{{ task.completed ? "Completado" : "Pendiente" }}</td>
+      <td>
+        <p-button class="btn" *ngIf="!task.completed" (click)="finishTask(task)"     class="default" type="button">
+            Completar
+         </p-button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+<p-toast />

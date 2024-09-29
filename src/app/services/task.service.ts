@@ -18,9 +18,7 @@ export class TaskService  {
     if (taskData) {
       try {
         const tasks = JSON.parse(taskData) as Task[];
-        console.log('%c⧭', 'color: #1d3f73', tasks);
         if (Array.isArray(tasks)) {
-          console.log('%c⧭', 'color: #997326', Array.isArray(tasks));
           this.taskSignal.set(tasks);
         } else {
           console.warn('Task data from cookies is not an array.');
@@ -38,13 +36,31 @@ export class TaskService  {
       console.warn(`Task with ID ${task.id} already exists and will not be added.`);
       return;
     }
-
     const updatedTasks = [...currentTasks, task];
     const taskString = JSON.stringify(updatedTasks);
     this.cookieService.set('taskData', taskString);
     this.taskSignal.set(updatedTasks);
   }
 
+  public updateTask(task: Task): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const currentTasks = this.taskSignal();
+      const index = currentTasks.findIndex(t => t.id === task.id);
+      if (index !== -1) {
+        const updatedTasks = [...currentTasks];
+        updatedTasks[index] = task;
+        this.updateTasksInCookiesAndSignal(updatedTasks);
+        resolve();
+      } else {
+        reject('Tarea no encontrada');
+      }
+    });
+  }
+  private updateTasksInCookiesAndSignal(tasks: Task[]): void {
+    this.taskSignal.set(tasks);
+    const taskString = JSON.stringify(tasks);
+    this.cookieService.set('taskData', taskString);
+  }
   public getTasks(): Task[] {
     return this.taskSignal();
   }
