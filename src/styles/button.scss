@@ -1,0 +1,21 @@
+.p-button {
+  @apply overflow-visible;
+}
+.default {
+  .p-button {
+    @apply bg-primary-blue px-3.5 py-2 flex justify-center text-white rounded  border-none  opacity-85   hover:scale-[1.01];
+  }
+}
+
+
+.destructive {
+  .p-button {
+    @apply bg-red-400 px-3.5 py-2 flex justify-center text-white rounded  border-none   opacity-85  hover:scale-[1.01];
+  }
+}
+
+.tertiary {
+  .p-button {
+    @apply bg-blue-950 px-3.5 py-2 flex justify-center text-white rounded  border-none    hover:scale-[1.01];
+  }
+}

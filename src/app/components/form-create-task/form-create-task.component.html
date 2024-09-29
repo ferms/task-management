@@ -1,0 +1,163 @@
+<form
+  [formGroup]="taskForm"
+  class="flex flex-col gap-2 w-full"
+  (ngSubmit)="sendTask()"
+>
+  <div class="flex flex-row justify-between gap-2 items-end">
+    <h1 class="text-left text-blue-primary text-xl font-bold leading-normal">
+      Tarea
+    </h1>
+    <p-button
+      (click)="agregarPersona()"
+      type="button"
+      label="Añadir persona"
+      icon="pi pi-user-plus"
+      class="default max-w-[200px]"
+    />
+  </div>
+
+  <input
+    pInputText
+    formControlName="nameTask"
+    placeholder="Nombre de la tarea"
+  />
+  <small
+    *ngIf="
+      taskForm.get('nameTask')?.invalid && taskForm.get('nameTask')?.touched
+    "
+    class="text-red-500 pl-1"
+  >
+    El nombre debe tener al menos 5 caracteres.
+  </small>
+
+  <p-calendar
+    formControlName="deadline"
+    placeholder="Fecha límite"
+  ></p-calendar>
+  <small
+    *ngIf="
+      taskForm.get('deadline')?.invalid && taskForm.get('deadline')?.touched
+    "
+    class="text-red-500 pl-1"
+  >
+    La fecha límite es obligatoria.
+  </small>
+
+  <div formArrayName="personas">
+    <div
+      *ngFor="let persona of personas.controls; let i = index"
+      [formGroupName]="i"
+      class="mb-3 pb-3 border-b"
+    >
+      <h1 class="text-left text-blue-primary text-xl font-bold leading-normal">
+        Nueva persona asociada
+      </h1>
+      <div class="flex gap-3 flex-col">
+        <div class="full-name">
+          <input
+            pInputText
+            formControlName="nombreCompleto"
+            placeholder="Nombre Completo"
+          />
+          <small
+            *ngIf="
+              personas.at(i).get('nombreCompleto')?.invalid &&
+              personas.at(i).get('nombreCompleto')?.touched
+            "
+            class="text-red-500 pl-1"
+          >
+            El nombre es obligatorio y debe tener al menos 5 caracteres.
+          </small>
+          <small *ngIf="isNombreDuplicado(i)" class="text-red-500 pl-1">
+            El nombre no puede repetirse.
+          </small>
+        </div>
+        <div class="age">
+          <p-inputNumber
+            formControlName="edad"
+            placeholder="Edad"
+            inputId="integeronly"
+            class="w-full"
+          />
+          <small
+            *ngIf="
+              personas.at(i).get('edad')?.invalid &&
+              personas.at(i).get('edad')?.touched
+            "
+            class="text-red-500 pl-1"
+          >
+            La edad debe ser mayor a 18.
+          </small>
+        </div>
+      </div>
+
+      <div class="my-3">
+        <label for="nuevaHabilidad">Habilidades</label>
+        <div class="flex mb-3 gap-1">
+          <input
+            pInputText
+            formControlName="nuevaHabilidad"
+            placeholder="Escribe una habilidad"
+          />
+          <p-button
+            type="button"
+            [rounded]="true"
+            severity="info"
+            (click)="agregarHabilidad(i)"
+            icon="pi pi-plus"
+            class="default"
+          />
+        </div>
+
+        <div *ngIf="personas.at(i).get('habilidades')?.value.length > 0">
+          <div class="w-full bg-slate-50 p-2 flex flex-wrap gap-1">
+            <p-chip
+              *ngFor="
+                let habilidad of personas.at(i).get('habilidades')?.value;
+                let j = index
+              "
+              [label]="habilidad.habilidad"
+              (onRemove)="eliminarHabilidad(i, j)"
+              [removable]="true"
+            ></p-chip>
+          </div>
+        </div>
+        <small
+          *ngIf="
+            personas.at(i).get('habilidades')?.value.length === 0 &&
+            personas.at(i).get('nuevaHabilidad')?.touched
+          "
+          class="text-red-500 pl-1"
+        >
+          Debes añadir al menos una habilidad.
+        </small>
+      </div>
+
+
+
+      <p-button
+        (click)="eliminarPersona(i)"
+        type="button"
+        label=""
+        icon="pi pi-trash"
+        class="destructive"
+        tooltip="Haz clic para eliminar esta persona"
+      />
+    </div>
+  </div>
+  <small
+  *ngIf="
+    taskForm.get('personas')?.hasError('minPersonas') &&
+    taskForm.get('personas')?.touched
+  "
+  class="text-red-500 pl-1 pb-4"
+>
+  Debes agregar al menos una persona.
+</small>
+  <p-button
+    class="default"
+    type="submit"
+    label="Guardar tarea"
+    icon="pi pi-save"
+  />
+</form>
